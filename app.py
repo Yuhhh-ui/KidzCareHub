@@ -61,6 +61,25 @@ def get_custom_css():
             .css-1d391kg {
                 padding-top: 3rem;
             }
+            p, span, div, .stText {
+                color: #333333 !important;
+                font-family: 'Roboto', sans-serif;
+            }
+            .stSidebar [data-testid="stMarkdownContainer"] p {
+                color: #333333 !important;
+                font-family: 'Roboto', sans-serif;
+            }
+            .stSelectbox > div > div > div {
+                background-color: #FFE4E1;
+                color: #333333 !important;
+            }
+            .stSelectbox > div > div > ul {
+                background-color: #FFE4E1;
+                color: #333333 !important;
+            }
+            .stSelectbox > div > div > ul > li {
+                color: #333333 !important;
+            }
         </style>
         """
     else:
@@ -344,3 +363,15 @@ st.markdown(get_health_tips())
 # Add a footer
 st.markdown("---")
 st.markdown("Made with 💖 for kids and parents everywhere!")
+
+# Additional style to ensure correct background color
+st.markdown("""
+<style>
+    .reportview-container {
+        background: #FFF0F5;
+    }
+    .main > div {
+        background-color: #FFF0F5;
+    }
+</style>
+""", unsafe_allow_html=True)
