@@ -28,18 +28,21 @@ def get_custom_css():
     if st.session_state.theme == "light":
         return """
         <style>
-            @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+            body, .main, .stSidebar, [data-testid="stSidebar"] {
+                font-family: 'Comic Neue', cursive !important;
+                font-size: 18px !important;
+            }
             .main {
                 background-color: #FFF0F5;
                 color: #333333;
-                font-family: 'Roboto', sans-serif;
             }
             .stButton > button {
                 background-color: #FF69B4;
                 color: white;
                 border-radius: 20px;
-                font-size: 18px;
-                font-family: 'Roboto', sans-serif;
+                font-size: 20px;
+                font-family: 'Comic Neue', cursive !important;
                 border: 2px solid #FF1493;
             }
             .stTextInput > div > div > input, .stTextArea > div > div > textarea {
@@ -47,37 +50,52 @@ def get_custom_css():
                 border-radius: 10px;
                 border: 2px solid #FF69B4;
                 color: #333333;
-                font-family: 'Roboto', sans-serif;
+                font-family: 'Comic Neue', cursive !important;
+                font-size: 18px !important;
             }
             h1, h2, h3 {
                 color: #FF1493;
-                font-family: 'Roboto', sans-serif;
+                font-family: 'Comic Neue', cursive !important;
+                font-weight: 700;
             }
             .stSidebar {
                 background-color: #FFB6C1;
                 color: #333333;
-                font-family: 'Roboto', sans-serif;
             }
             .css-1d391kg {
                 padding-top: 3rem;
+            }
+            @media (max-width: 768px) {
+                body, .main, .stSidebar, [data-testid="stSidebar"] {
+                    font-size: 16px !important;
+                }
+                .stButton > button {
+                    font-size: 18px;
+                }
+                h1 { font-size: 28px !important; }
+                h2 { font-size: 24px !important; }
+                h3 { font-size: 20px !important; }
             }
         </style>
         """
     else:
         return """
         <style>
-            @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+            body, .main, .stSidebar, [data-testid="stSidebar"] {
+                font-family: 'Comic Neue', cursive !important;
+                font-size: 18px !important;
+            }
             .main, .stSidebar, [data-testid="stSidebar"] {
                 background-color: #1E1E1E;
                 color: #FFFFFF;
-                font-family: 'Roboto', sans-serif;
             }
             .stButton > button {
                 background-color: #FF69B4;
                 color: white;
                 border-radius: 20px;
-                font-size: 18px;
-                font-family: 'Roboto', sans-serif;
+                font-size: 20px;
+                font-family: 'Comic Neue', cursive !important;
                 border: 2px solid #FF1493;
             }
             .stTextInput > div > div > input, .stTextArea > div > div > textarea {
@@ -85,25 +103,22 @@ def get_custom_css():
                 color: #FFFFFF !important;
                 border-radius: 10px;
                 border: 2px solid #FF69B4;
-                font-family: 'Roboto', sans-serif;
+                font-family: 'Comic Neue', cursive !important;
+                font-size: 18px !important;
             }
             .stTextInput > div > div > input::placeholder, .stTextArea > div > div > textarea::placeholder {
                 color: #AAAAAA;
             }
             h1, h2, h3 {
                 color: #FF69B4;
-                font-family: 'Roboto', sans-serif;
-            }
-            .css-1d391kg {
-                padding-top: 3rem;
+                font-family: 'Comic Neue', cursive !important;
+                font-weight: 700;
             }
             p, span, div, .stText {
                 color: #FFFFFF !important;
-                font-family: 'Roboto', sans-serif;
             }
             .stSidebar [data-testid="stMarkdownContainer"] p {
                 color: #FFFFFF !important;
-                font-family: 'Roboto', sans-serif;
             }
             .stSelectbox > div > div > div {
                 background-color: #2E2E2E;
@@ -115,6 +130,17 @@ def get_custom_css():
             }
             .stSelectbox > div > div > ul > li {
                 color: #FFFFFF !important;
+            }
+            @media (max-width: 768px) {
+                body, .main, .stSidebar, [data-testid="stSidebar"] {
+                    font-size: 16px !important;
+                }
+                .stButton > button {
+                    font-size: 18px;
+                }
+                h1 { font-size: 28px !important; }
+                h2 { font-size: 24px !important; }
+                h3 { font-size: 20px !important; }
             }
         </style>
         """
