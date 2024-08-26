@@ -325,6 +325,7 @@ if st.button("Get Answer 🚀"):
         st.warning("Please ask a question first! 😊")
 
 st.header("📚 Health Tips and Reminders")
+
 def get_health_tips():
     return """
     **Health Tips for Kids:**
@@ -337,7 +338,8 @@ def get_health_tips():
     **Vaccination Reminders:**
     - Keep track of immunizations such as MMR, DTP, and annual flu shots.
     - Follow up on booster doses as recommended by your pediatrician.
-    """  # Close the triple-quoted string here
+    """
+
 st.markdown(get_health_tips())
 
 # Add a footer
