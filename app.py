@@ -29,21 +29,42 @@ def get_custom_css():
         return """
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-            body {
+            .main {
                 background-color: #FFF0F5;
                 color: #333333;
+                font-family: 'Roboto', sans-serif;
             }
-            # ... rest of the light mode CSS ...
+            .stButton > button {
+                background-color: #FF69B4;
+                color: white;
+                border-radius: 20px;
+                font-size: 18px;
+                font-family: 'Roboto', sans-serif;
+                border: 2px solid #FF1493;
+            }
+            .stTextInput > div > div > input, .stTextArea > div > div > textarea {
+                background-color: #FFE4E1;
+                border-radius: 10px;
+                border: 2px solid #FF69B4;
+                color: #333333;
+                font-family: 'Roboto', sans-serif;
+            }
+            h1, h2, h3 {
+                color: #FF1493;
+                font-family: 'Roboto', sans-serif;
+            }
+            .stSidebar {
+                background-color: #FFB6C1;
+                color: #333333;
+                font-family: 'Roboto', sans-serif;
+            }
+            .css-1d391kg {
+                padding-top: 3rem;
+            }
         </style>
         """
     else:
         return """
-        <style>
-            @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-            body {
-                background-color: #1E1E1E;
-                color: #FFFFFF;
-            }
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
             .main, .stSidebar, [data-testid="stSidebar"] {
@@ -323,15 +344,3 @@ st.markdown(get_health_tips())
 # Add a footer
 st.markdown("---")
 st.markdown("Made with 💖 for kids and parents everywhere!")
-
-# Additional style to ensure correct background color
-st.markdown("""
-<style>
-    .reportview-container {
-        background: #FFF0F5;
-    }
-    .main > div {
-        background-color: #FFF0F5;
-    }
-</style>
-""", unsafe_allow_html=True)
