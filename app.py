@@ -17,6 +17,10 @@ st.set_page_config(page_title="Welcome to KidzCareHub, I'm Rhea", page_icon="�
 if 'theme' not in st.session_state:
     st.session_state.theme = "light"
 
+# Voice preference toggle
+if 'voice_enabled' not in st.session_state:
+    st.session_state.voice_enabled = True
+
 def toggle_theme():
     st.session_state.theme = "dark" if st.session_state.theme == "light" else "light"
 
@@ -120,7 +124,6 @@ st.markdown(get_custom_css(), unsafe_allow_html=True)
 # Set up OpenAI API key
 api_key = st.secrets["OPENAI_API_KEY"]
 
-
 # Initialize the OpenAI model
 llm = OpenAI(temperature=0.7, api_key=api_key, streaming=True)
 
@@ -178,6 +181,9 @@ def get_pediatric_response(patient_info, question, target_lang):
         return f"Oops! Something went wrong: {str(e)}"
 
 def text_to_speech(text, lang='en'):
+    if not st.session_state.voice_enabled:
+        return
+    
     try:
         # Create a gTTS object
         tts = gTTS(text=text, lang=lang, slow=False)
@@ -281,6 +287,10 @@ with st.sidebar:
     )
     selected_lang_code = supported_languages.get(selected_language, 'en')
     
+    st.header("🔊 Voice Settings")
+    voice_enabled = st.toggle("Enable Voice", value=st.session_state.voice_enabled)
+    st.session_state.voice_enabled = voice_enabled
+    
     st.header("📊 Patient Summary")
     st.text(patient_info)
 
@@ -310,7 +320,8 @@ if st.button("Get Answer 🚀"):
             answer = get_pediatric_response(patient_info, question, selected_lang_code)
         st.subheader("👩‍⚕️ Rhea's response:")
         st.write(answer)
-        text_to_speech(answer, lang=selected_lang_code)
+        if st.session_state.voice_enabled:
+            text_to_speech(answer, lang=selected_lang_code)
     else:
         st.warning("Please ask a question first! 😊")
 
