@@ -17,10 +17,6 @@ st.set_page_config(page_title="Welcome to KidzCareHub, I'm Rhea", page_icon="�
 if 'theme' not in st.session_state:
     st.session_state.theme = "light"
 
-# Voice preference toggle
-if 'voice_enabled' not in st.session_state:
-    st.session_state.voice_enabled = True
-
 def toggle_theme():
     st.session_state.theme = "dark" if st.session_state.theme == "light" else "light"
 
@@ -124,6 +120,7 @@ st.markdown(get_custom_css(), unsafe_allow_html=True)
 # Set up OpenAI API key
 api_key = st.secrets["OPENAI_API_KEY"]
 
+
 # Initialize the OpenAI model
 llm = OpenAI(temperature=0.7, api_key=api_key, streaming=True)
 
@@ -136,7 +133,8 @@ prompt_template = PromptTemplate(
     
     Based on this information, please answer the following question about pediatric care: {question}
     
-    Provide a short and very concise, informative, and very child-friendly answer, considering the patient's age, medical history, and any relevant pediatric guidelines. And also give home remedies or local tips on how to solve some of these problems before going to the doctor. If they ask any questions about sex between the age of 0  and 17 make sure to let them know CLEARLY that they should not be having sex at this age and that they are too young, that is only if they ask about sex, if they do not ask anything about it then do not put it in your answer. If they are 18 and above then you can tell them it is not wise to have sex at this age but provide tips that may help them. Remember only say anything about sex if they ask about it.
+    Provide a short and very concise, informative, and very child-friendly answer, considering the patient's age, medical history, and any relevant pediatric guidelines. And also give home remedies or local tips in point form, on how to solve some of these problems before going to the doctor.
+    """
 )
 
 # Create a chain
@@ -180,9 +178,6 @@ def get_pediatric_response(patient_info, question, target_lang):
         return f"Oops! Something went wrong: {str(e)}"
 
 def text_to_speech(text, lang='en'):
-    if not st.session_state.voice_enabled:
-        return
-    
     try:
         # Create a gTTS object
         tts = gTTS(text=text, lang=lang, slow=False)
@@ -286,10 +281,6 @@ with st.sidebar:
     )
     selected_lang_code = supported_languages.get(selected_language, 'en')
     
-    st.header("🔊 Voice Settings")
-    voice_enabled = st.toggle("Enable Voice", value=st.session_state.voice_enabled)
-    st.session_state.voice_enabled = voice_enabled
-    
     st.header("📊 Patient Summary")
     st.text(patient_info)
 
@@ -319,16 +310,24 @@ if st.button("Get Answer 🚀"):
             answer = get_pediatric_response(patient_info, question, selected_lang_code)
         st.subheader("👩‍⚕️ Rhea's response:")
         st.write(answer)
-        if st.session_state.voice_enabled:
-            text_to_speech(answer, lang=selected_lang_code)
+        text_to_speech(answer, lang=selected_lang_code)
     else:
         st.warning("Please ask a question first! 😊")
 
 st.header("📚 Health Tips and Reminders")
-
 def get_health_tips():
-    return "Some health tips here."
+    return """
+    **Health Tips for Kids:**
+    - Ensure regular pediatric check-ups and adhere to vaccination schedules.
+    - Encourage a balanced diet with plenty of vegetables, fruits, and proteins.
+    - Promote at least 1 hour of physical activity each day.
+    - Establish a consistent bedtime routine to ensure adequate sleep.
+    - Teach proper hand washing techniques to prevent infections.
 
+    **Vaccination Reminders:**
+    - Keep track of immunizations such as MMR, DTP, and annual flu shots.
+    - Follow up on booster doses as recommended by your pediatrician.
+    """
 st.markdown(get_health_tips())
 
 # Add a footer
