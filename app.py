@@ -327,18 +327,7 @@ if st.button("Get Answer 🚀"):
 st.header("📚 Health Tips and Reminders")
 
 def get_health_tips():
-    return """
-    **Health Tips for Kids:**
-    - Ensure regular pediatric check-ups and adhere to vaccination schedules.
-    - Encourage a balanced diet with plenty of vegetables, fruits, and proteins.
-    - Promote at least 1 hour of physical activity each day.
-    - Establish a consistent bedtime routine to ensure adequate sleep.
-    - Teach proper hand washing techniques to prevent infections.
-
-    **Vaccination Reminders:**
-    - Keep track of immunizations such as MMR, DTP, and annual flu shots.
-    - Follow up on booster doses as recommended by your pediatrician.
-    """
+    return "Some health tips here."
 
 st.markdown(get_health_tips())
 
