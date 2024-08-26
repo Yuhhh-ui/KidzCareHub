@@ -136,8 +136,7 @@ prompt_template = PromptTemplate(
     
     Based on this information, please answer the following question about pediatric care: {question}
     
-    Provide a short and very concise, informative, and very child-friendly answer, considering the patient's age, medical history, and any relevant pediatric guidelines. And also give home remedies or local tips on how to solve some of these problems before going to the doctor, only if they ask questions about sex express that they are too young and shouldnt be having sex.Make sure that you make it one hundred percent clear that they should not be having sex at this age. If they are eighteen then give tips on how to protect themselves and all other necessary tips. If they do not ask anything about sex, do not mention anything about sex.
-    """
+    Provide a short and very concise, informative, and very child-friendly answer, considering the patient's age, medical history, and any relevant pediatric guidelines. And also give home remedies or local tips on how to solve some of these problems before going to the doctor. If they ask any questions about sex between the age of 0  and 17 make sure to let them know CLEARLY that they should not be having sex at this age and that they are too young, that is only if they ask about sex, if they do not ask anything about it then do not put it in your answer. If they are 18 and above then you can tell them it is not wise to have sex at this age but provide tips that may help them. Remember only say anything about sex if they ask about it.
 )
 
 # Create a chain
