@@ -75,6 +75,16 @@ def get_custom_css():
                 h1 { font-size: 28px !important; }
                 h2 { font-size: 24px !important; }
                 h3 { font-size: 20px !important; }
+                .stTextInput > div > div > input::placeholder, .stTextArea > div > div > textarea::placeholder {
+                    color: #666666 !important;
+                }
+                .stTextInput > label, .stTextArea > label, .stNumberInput > label {
+                    color: #333333 !important;
+                }
+                .stTextInput > div > div > input, .stTextArea > div > div > textarea {
+                    background-color: #FFFFFF;
+                    color: #333333 !important;
+                }
             }
         </style>
         """
