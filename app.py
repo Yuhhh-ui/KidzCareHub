@@ -1,5 +1,6 @@
 import streamlit as st
-import openai
+import os
+import base64
 from langchain_openai import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -7,17 +8,13 @@ from langchain_core.runnables import RunnablePassthrough
 from deep_translator import GoogleTranslator
 from langdetect import detect
 from gtts import gTTS
-import os
-import base64
 
 # Custom theme and configuration
 st.set_page_config(page_title="Welcome to KidzCareHub, I'm Rhea", page_icon="👶", layout="wide")
 
-# Theme toggle
+# Theme and voice preference
 if 'theme' not in st.session_state:
     st.session_state.theme = "light"
-
-# Voice preference toggle
 if 'voice_enabled' not in st.session_state:
     st.session_state.voice_enabled = True
 
@@ -28,12 +25,11 @@ def get_custom_css():
     if st.session_state.theme == "light":
         return """
         <style>
+            /* Light theme styles */
             @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
             body, .main, .stSidebar, [data-testid="stSidebar"] {
                 font-family: 'Comic Neue', cursive !important;
                 font-size: 18px !important;
-            }
-            .main {
                 background-color: #FFF0F5;
                 color: #333333;
             }
@@ -60,43 +56,18 @@ def get_custom_css():
             }
             .stSidebar {
                 background-color: #FFB6C1;
-                color: #333333;
             }
-            .css-1d391kg {
-                padding-top: 3rem;
-            }
-            @media (max-width: 768px) {
-                body, .main, .stSidebar, [data-testid="stSidebar"] {
-                    font-size: 16px !important;
-                }
-                .stButton > button {
-                    font-size: 18px;
-                }
-                h1 { font-size: 28px !important; }
-                h2 { font-size: 24px !important; }
-                h3 { font-size: 20px !important; }
-                .stTextInput > div > div > input::placeholder, .stTextArea > div > div > textarea::placeholder {
-                    color: #666666 !important;
-                }
-                .stTextInput > label, .stTextArea > label, .stNumberInput > label {
-                    color: #333333 !important;
-                }
-                .stTextInput > div > div > input, .stTextArea > div > div > textarea {
-                    background-color: #FFFFFF;
-                    color: #333333 !important;
-                }
-            }
+            /* Add more custom styles as needed */
         </style>
         """
     else:
         return """
         <style>
+            /* Dark theme styles */
             @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
             body, .main, .stSidebar, [data-testid="stSidebar"] {
                 font-family: 'Comic Neue', cursive !important;
                 font-size: 18px !important;
-            }
-            .main, .stSidebar, [data-testid="stSidebar"] {
                 background-color: #1E1E1E;
                 color: #FFFFFF;
             }
@@ -116,54 +87,35 @@ def get_custom_css():
                 font-family: 'Comic Neue', cursive !important;
                 font-size: 18px !important;
             }
-            .stTextInput > div > div > input::placeholder, .stTextArea > div > div > textarea::placeholder {
-                color: #AAAAAA;
-            }
             h1, h2, h3 {
                 color: #FF69B4;
                 font-family: 'Comic Neue', cursive !important;
                 font-weight: 700;
             }
-            p, span, div, .stText {
-                color: #FFFFFF !important;
-            }
-            .stSidebar [data-testid="stMarkdownContainer"] p {
-                color: #FFFFFF !important;
-            }
-            .stSelectbox > div > div > div {
+            .stSidebar {
                 background-color: #2E2E2E;
-                color: #FFFFFF !important;
             }
-            .stSelectbox > div > div > ul {
-                background-color: #2E2E2E;
-                color: #FFFFFF !important;
-            }
-            .stSelectbox > div > div > ul > li {
-                color: #FFFFFF !important;
-            }
-            @media (max-width: 768px) {
-                body, .main, .stSidebar, [data-testid="stSidebar"] {
-                    font-size: 16px !important;
-                }
-                .stButton > button {
-                    font-size: 18px;
-                }
-                h1 { font-size: 28px !important; }
-                h2 { font-size: 24px !important; }
-                h3 { font-size: 20px !important; }
-            }
+            /* Add more custom styles as needed */
         </style>
         """
 
 st.markdown(get_custom_css(), unsafe_allow_html=True)
 
 # Set up OpenAI API key
-api_key = st.secrets["OPENAI_API_KEY"]
+try:
+    api_key = st.secrets["OPENAI_API_KEY"]
+except Exception as e:
+    st.error(f"Error accessing OpenAI API key: {str(e)}")
+    st.stop()
 
 # Initialize the OpenAI model
-llm = OpenAI(temperature=0.7, api_key=api_key, streaming=True)
+try:
+    llm = OpenAI(temperature=0.7, api_key=api_key, streaming=True)
+except Exception as e:
+    st.error(f"Error initializing OpenAI model: {str(e)}")
+    st.stop()
 
-# Define a prompt template for pediatric care queries
+# Define prompt template
 prompt_template = PromptTemplate(
     input_variables=["patient_info", "question"],
     template="""
@@ -172,11 +124,11 @@ prompt_template = PromptTemplate(
     
     Based on this information, please answer the following question about pediatric care: {question}
     
-    Provide a short and very concise, informative, and very child-friendly answer, considering the patient's age, medical history, and any relevant pediatric guidelines. And also give home remedies or local tips on how to solve some of these problems before going to the doctor. If they ask any questions about sex between the age of 0  and 17 make sure to let them know CLEARLY that they should not be having sex at this age and that they are too young, that is only if they ask about sex, if they do not ask anything about it then do not put it in your answer. If they are 18 and above then you can tell them it is not wise to have sex at this age but provide tips that may help them. Do not mention anything about sex unless they ask something that is surrounded about the topic sex.
+    Provide a short, concise, informative, and child-friendly answer, considering the patient's age, medical history, and relevant pediatric guidelines. Include home remedies or local tips when appropriate. For questions about sex from those under 18, clearly state it's not appropriate for their age. For those 18 and over, provide cautious guidance if necessary. Only discuss sex if directly asked.
     """
 )
 
-# Create a chain
+# Create chain
 chain = (
     {"patient_info": RunnablePassthrough(), "question": RunnablePassthrough()}
     | prompt_template
@@ -221,28 +173,17 @@ def text_to_speech(text, lang='en'):
         return
     
     try:
-        # Create a gTTS object
         tts = gTTS(text=text, lang=lang, slow=False)
-        
-        # Save the audio to a temporary file
         tts.save("temp.mp3")
         
-        # Read the saved audio file
         with open("temp.mp3", "rb") as audio_file:
             audio_bytes = audio_file.read()
         
-        # Encode the audio to base64
         audio_base64 = base64.b64encode(audio_bytes).decode()
-        
-        # Create the HTML for audio playback
         audio_html = f'<audio autoplay="true" src="data:audio/mp3;base64,{audio_base64}">'
-        
-        # Display the audio player
         st.markdown(audio_html, unsafe_allow_html=True)
         
-        # Remove the temporary file
         os.remove("temp.mp3")
-        
     except Exception as e:
         st.error(f"Text-to-Speech failed: {str(e)}")
         st.warning("Text-to-Speech is currently unavailable. Please read the response instead.")
@@ -353,29 +294,31 @@ with st.sidebar:
 if st.button("Get Answer 🚀"):
     if question:
         with st.spinner("Let's see... 🤔"):
-            answer = get_pediatric_response(patient_info, question, selected_lang_code)
-        st.subheader("👩‍⚕️ Rhea's response:")
-        st.write(answer)
-        if st.session_state.voice_enabled:
-            text_to_speech(answer, lang=selected_lang_code)
+            try:
+                answer = get_pediatric_response(patient_info, question, selected_lang_code)
+                st.subheader("👩‍⚕️ Rhea's response:")
+                st.write(answer)
+                if st.session_state.voice_enabled:
+                    text_to_speech(answer, lang=selected_lang_code)
+            except Exception as e:
+                st.error(f"An error occurred while generating the response: {str(e)}")
     else:
         st.warning("Please ask a question first! 😊")
 
 st.header("📚 Health Tips and Reminders")
-def get_health_tips():
-    return """
-    **Health Tips for Kids:**
-    - Ensure regular pediatric check-ups and adhere to vaccination schedules.
-    - Encourage a balanced diet with plenty of vegetables, fruits, and proteins.
-    - Promote at least 1 hour of physical activity each day.
-    - Establish a consistent bedtime routine to ensure adequate sleep.
-    - Teach proper hand washing techniques to prevent infections.
+health_tips = """
+**Health Tips for Kids:**
+- Ensure regular pediatric check-ups and adhere to vaccination schedules.
+- Encourage a balanced diet with plenty of vegetables, fruits, and proteins.
+- Promote at least 1 hour of physical activity each day.
+- Establish a consistent bedtime routine to ensure adequate sleep.
+- Teach proper hand washing techniques to prevent infections.
 
-    **Vaccination Reminders:**
-    - Keep track of immunizations such as MMR, DTP, and annual flu shots.
-    - Follow up on booster doses as recommended by your pediatrician.
-    """
-st.markdown(get_health_tips())
+**Vaccination Reminders:**
+- Keep track of immunizations such as MMR, DTP, and annual flu shots.
+- Follow up on booster doses as recommended by your pediatrician.
+"""
+st.markdown(health_tips)
 
 # Add a footer
 st.markdown("---")
